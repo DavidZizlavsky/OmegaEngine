@@ -1,0 +1,14 @@
+# Omega Engine binaries
+OmegaEngine/bin/
+OmegaEngine/bin-int/
+
+# App binaries
+App/bin/
+App/bin-int/
+
+# Visual Studio data
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
