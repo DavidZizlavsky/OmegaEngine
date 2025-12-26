@@ -19,12 +19,18 @@ project "OmegaEngine"
         "vendor/GLM/include"
     }
 
-    links { 
-        "vendor/GLFW/lib-vc2022/glfw3.lib", 
-        "vendor/GLEW/lib/Release/x64/glew32s.lib" 
+    libdirs {
+        "vendor/GLFW/lib-vc2022",
+        "vendor/GLEW/lib/Release/x64"
     }
 
-    defines { "OMEGA_ENGINE_DLL" }
+    links { 
+        "glew32s.lib",
+        "glfw3.lib",
+        "opengl32.lib"
+    }
+
+    defines { "OMEGA_ENGINE_DLL", "GLEW_STATIC" }
 
     filter "system:windows"
         defines { "WINDOWS" }
