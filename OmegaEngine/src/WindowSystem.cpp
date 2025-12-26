@@ -1,5 +1,5 @@
-#include "OmegaEngine/Window.h"
-#include "OmegaEngine/WindowGLFW.h"
+#include "OmegaEngine/Window/Window.h"
+#include "OmegaEngine/Window/impl/WindowGLFW.h"
 
 namespace Omega {
 	/*

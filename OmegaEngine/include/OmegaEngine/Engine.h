@@ -1,7 +1,7 @@
 #pragma once
 #include "OmegaEngine/Macros.h"
-#include "OmegaEngine/Window.h"
-#include "OmegaEngine/Renderer.h"
+#include "OmegaEngine/Window/Window.h"
+#include "OmegaEngine/Renderer/Renderer.h"
 
 namespace Omega {
 	class OMEGA_API Engine {

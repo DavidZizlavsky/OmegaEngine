@@ -1,5 +1,5 @@
 #pragma once
-#include "OmegaEngine/Window.h"
+#include "OmegaEngine/Window/Window.h"
 #include <GLFW/glfw3.h>
 
 namespace Omega {

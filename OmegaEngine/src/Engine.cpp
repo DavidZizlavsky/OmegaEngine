@@ -1,7 +1,7 @@
 #include "OmegaEngine/Engine.h"
-#include "OmegaEngine/Renderer.h"
-#include "OmegaEngine/RendererOpenGL.h"
-#include "OmegaEngine/Window.h"
+#include "OmegaEngine/Renderer/Renderer.h"
+#include "OmegaEngine/Renderer/impl/RendererOpenGL.h"
+#include "OmegaEngine/Window/Window.h"
 #include <iostream>
 
 namespace Omega {

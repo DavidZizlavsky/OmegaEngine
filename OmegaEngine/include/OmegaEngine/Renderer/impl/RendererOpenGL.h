@@ -1,5 +1,5 @@
 #pragma once
-#include "OmegaEngine/Renderer.h"
+#include "OmegaEngine/Renderer/Renderer.h"
 
 namespace Omega {
 	class RendererOpenGL final : public Renderer {

@@ -1,5 +1,5 @@
 #pragma once
-#include "OmegaEngine/RendererOpenGL.h"
+#include "OmegaEngine/Renderer/impl/RendererOpenGL.h"
 #include <GLEW/glew.h>
 #include <stdexcept>
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "OmegaEngine/WindowGLFW.h"
+#include "OmegaEngine/Window/impl/WindowGLFW.h"
 #include <stdexcept>
 
 namespace Omega {
