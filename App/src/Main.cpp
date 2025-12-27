@@ -10,8 +10,9 @@ int main()
 		engine.Init();
 		engine.Shutdown();
 	}
-	catch (std::runtime_error &e) {
+	catch (const std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
+		return -1;
 	}
 	return 0;
 }

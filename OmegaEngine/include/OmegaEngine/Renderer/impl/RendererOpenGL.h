@@ -3,6 +3,8 @@
 
 namespace Omega {
 	class RendererOpenGL final : public Renderer {
+	private:
+		static bool isInitGLEW;
 	public:
 		RendererOpenGL();
 		~RendererOpenGL() override;
@@ -11,5 +13,7 @@ namespace Omega {
 		void Debug() override;
 #endif
 		void FrameBegin() override;
+
+		static void InitGLEW();
 	};
 }

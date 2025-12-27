@@ -14,15 +14,30 @@ static void OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum se
 
 namespace Omega {
 	/*
-	 * Initialize renderer
-	 */ 
-	RendererOpenGL::RendererOpenGL()
+	 * Variable for safety checks to prevent double termination/initialization of GLFW
+	 */
+	bool RendererOpenGL::isInitGLEW = false;
+
+	/*
+	 * Initializes GLEW library for further use
+	 */
+	void RendererOpenGL::InitGLEW()
 	{
+		if (isInitGLEW) {
+			return;
+		}
 		glewExperimental = GL_TRUE;
 		if (glewInit() != GLEW_OK) {
 			throw std::runtime_error("GLEW initialization failed!");
 		}
+		isInitGLEW = true;
+	}
 
+	/*
+	 * Initialize renderer
+	 */ 
+	RendererOpenGL::RendererOpenGL()
+	{
 		// Set default clear color
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 	}

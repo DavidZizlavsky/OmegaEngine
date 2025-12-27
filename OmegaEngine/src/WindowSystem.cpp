@@ -6,6 +6,7 @@ namespace Omega {
 	 * Initialization of a windowing system - implementation-independent wrapper
 	 */ 
 	WindowSystem::WindowSystem() {
+		m_windowLib = WindowLib::GLFW;
 		WindowGLFW::InitGLFW();
 	}
 

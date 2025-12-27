@@ -1,6 +1,5 @@
 #include "OmegaEngine/Engine.h"
 #include "OmegaEngine/Renderer/Renderer.h"
-#include "OmegaEngine/Renderer/impl/RendererOpenGL.h"
 #include "OmegaEngine/Window/Window.h"
 #include <iostream>
 
@@ -9,8 +8,7 @@ namespace Omega {
 	{
 		m_window = m_windowSystem.CreateWindow(600, 400, "Test");
 
-		// TODO: abstract Renderer creation to not use implemented code in here
-		m_renderer = new RendererOpenGL();
+		m_renderer = m_rendererSystem.CreateRenderer();
 #ifdef DEBUG
 		m_renderer->Debug();
 #endif
