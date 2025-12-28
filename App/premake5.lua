@@ -14,7 +14,8 @@ project "App"
 
     includedirs {
         "include",
-        "../OmegaEngine/include"
+        "../OmegaEngine/include",
+        "../OmegaEngine/vendor/GLM/include"
     }
 
     links { 

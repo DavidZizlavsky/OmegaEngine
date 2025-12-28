@@ -1,6 +1,7 @@
 #include "OmegaEngine/Engine.h"
 #include "OmegaEngine/Renderer/Renderer.h"
 #include "OmegaEngine/Window/Window.h"
+#include "OmegaEngine/File.h"
 #include <iostream>
 
 namespace Omega {
@@ -13,10 +14,20 @@ namespace Omega {
 		m_renderer->Debug();
 #endif
 		
+		std::string vertexSource = File::LoadTextFile("assets/shaders/shaderVertex.vert");
+		std::string fragmentSource = File::LoadTextFile("assets/shaders/shaderFragment.frag");
+
+		ShaderProgramObject shaderProgramObject = {};
+		shaderProgramObject.vertexShaderSource = vertexSource.c_str();
+		shaderProgramObject.fragmentShaderSource = fragmentSource.c_str();
+
+		ShaderProgramHandle shaderProgramHandle = m_renderer->CreateShaderProgram(shaderProgramObject);
+
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			m_renderer->FrameBegin();
-
+			
+			m_renderer->FrameEnd();
 			m_window->SwapBuffers();
 			m_window->PollEvents();
 		}
