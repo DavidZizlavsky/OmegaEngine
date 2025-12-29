@@ -49,6 +49,8 @@ namespace Omega {
 		virtual MaterialHandle CreateMaterial(MaterialObject material) = 0;
 		virtual RenderObjectHandle CreateRenderObject(RenderObject renderObject) = 0;
 		virtual void FrameEnd() = 0;
+
+		virtual void ResizeFramebuffer(int width, int height) {}
 	};
 
 	enum class OMEGA_API RendererLib {

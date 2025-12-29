@@ -1,14 +1,18 @@
 #pragma once
 #include "OmegaEngine/Macros.h"
+#include <functional>
 
 namespace Omega {
 	class OMEGA_API Window {
 	public:
+		using ResizeCallback = std::function<void(int width, int height)>;
 		virtual ~Window() = default;
 
 		virtual int WindowShouldClose() = 0;
 		virtual void PollEvents() = 0;
 		virtual void SwapBuffers() = 0;
+
+		virtual void SetResizeCallback(ResizeCallback callback) = 0;
 	};
 
 	enum class OMEGA_API WindowLib {

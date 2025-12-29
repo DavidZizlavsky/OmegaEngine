@@ -252,4 +252,10 @@ namespace Omega {
 			Draw(renderObject);
 		}
 	}
+
+	// Adjust viewport according to viewport
+	void RendererOpenGL::ResizeFramebuffer(int width, int height)
+	{
+		glViewport(0, 0, width, height);
+	}
 }

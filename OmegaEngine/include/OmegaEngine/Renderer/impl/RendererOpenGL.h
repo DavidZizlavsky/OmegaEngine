@@ -38,6 +38,8 @@ namespace Omega {
 		RenderObjectHandle CreateRenderObject(RenderObject renderObject) override;
 		void FrameEnd() override;
 
+		void ResizeFramebuffer(int width, int height) override;
+
 		static void InitGLEW();
 	};
 }

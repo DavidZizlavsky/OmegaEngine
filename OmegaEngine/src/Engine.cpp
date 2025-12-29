@@ -16,6 +16,10 @@ namespace Omega {
 #ifdef DEBUG
 		m_renderer->Debug();
 #endif
+		Window::ResizeCallback resizeCallback = [renderer = m_renderer](int width, int height) {
+			renderer->ResizeFramebuffer(width, height);
+		};
+		m_window->SetResizeCallback(resizeCallback);
 		
 		std::string vertexSource = File::LoadTextFile("assets/shaders/shaderVertex.vert");
 		std::string fragmentSource = File::LoadTextFile("assets/shaders/shaderFragment.frag");

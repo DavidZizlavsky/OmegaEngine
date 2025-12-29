@@ -1,4 +1,5 @@
 #include "OmegaEngine/Window/impl/WindowGLFW.h"
+#include "OmegaEngine/Window/Window.h"
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
@@ -11,7 +12,8 @@ namespace Omega {
 	/*
 	 * Initializes GLFW library for further use
 	 */
-	void WindowGLFW::InitGLFW() {
+	void WindowGLFW::InitGLFW()
+	{
 		if (isInitGLFW) {
 			return;
 		}
@@ -35,7 +37,8 @@ namespace Omega {
 	/*
 	 * Terminates GLFW library
 	 */
-	void WindowGLFW::ShutdownGLFW() {
+	void WindowGLFW::ShutdownGLFW()
+	{
 		if (!isInitGLFW) {
 			return;
 		}
@@ -45,41 +48,77 @@ namespace Omega {
 	}
 
 	/*
+	 * GLFW callback for framebuffer resizing 
+	 */
+	void WindowGLFW::CallbackFramebufferResize(GLFWwindow* window, int width, int height)
+	{
+		WindowGLFW* self = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window));
+
+		if (!self) {
+			return;
+		}
+
+		self->OnCallbackFramebufferResize(width, height);
+	}
+
+	void WindowGLFW::OnCallbackFramebufferResize(int width, int height)
+	{
+		if (m_resizeCallback) {
+			m_resizeCallback(width, height);
+		}
+	}
+
+	/*
 	 * Creates and opens a new GLFW window
 	 */
-	WindowGLFW::WindowGLFW(int width, int height, const char* title) {
+	WindowGLFW::WindowGLFW(int width, int height, const char* title)
+	{
 		m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 		if (m_window == nullptr) {
 			throw std::runtime_error("Failed to create a window!");
 		}
 		glfwMakeContextCurrent(m_window);
+		glfwSetWindowUserPointer(m_window, this);
+		glfwSetFramebufferSizeCallback(m_window, CallbackFramebufferResize);
 	}
 
 	/*
 	 * Destroys GLFW window
 	 */
-	WindowGLFW::~WindowGLFW() {
+	WindowGLFW::~WindowGLFW()
+	{
 		glfwDestroyWindow(m_window);
 	}
 
 	/*
 	 * Determines if the window should be closed based on window events (such as close button)
 	 */
-	int WindowGLFW::WindowShouldClose() {
+	int WindowGLFW::WindowShouldClose()
+	{
 		return glfwWindowShouldClose(m_window);
 	}
 
 	/*
 	 * Polls all events from GLFW (this may block on some platforms)
 	 */
-	void WindowGLFW::PollEvents() {
+	void WindowGLFW::PollEvents()
+	{
 		glfwPollEvents();
 	}
 
 	/*
 	 * Swaps buffers of a GLFW window
 	 */
-	void WindowGLFW::SwapBuffers() {
+	void WindowGLFW::SwapBuffers()
+	{
 		glfwSwapBuffers(m_window);
+	}
+
+	/*
+	 * Sets member variable to have a callback
+	 */
+	void WindowGLFW::SetResizeCallback(ResizeCallback callback)
+	{
+		m_resizeCallback = callback;
 	}
 }
