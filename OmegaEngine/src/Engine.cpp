@@ -3,6 +3,8 @@
 #include "OmegaEngine/Window/Window.h"
 #include "OmegaEngine/File.h"
 #include <iostream>
+#include <string>
+#include <cstdint>
 
 namespace Omega {
 	void Engine::Init()
@@ -23,10 +25,31 @@ namespace Omega {
 
 		ShaderProgramHandle shaderProgramHandle = m_renderer->CreateShaderProgram(shaderProgramObject);
 
+		Vertex vertices[] = { 
+			{glm::vec3(-1, 1, 0)},
+			{glm::vec3(-1, -1, 0)},
+			{glm::vec3(1, -1, 0)}
+		};
+
+		uint32_t indices[] = {
+			0, 1, 2
+		};
+
+		MeshObject meshObject = {};
+		meshObject.vertices = vertices;
+		meshObject.verticesCount = 3;
+		meshObject.indices = indices;
+		meshObject.indicesCount = 3;
+
+		MeshHandle meshHandle = m_renderer->CreateMesh(meshObject);
+
+		RenderObject renderObject = {};
+		// TODO: continue
+
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			m_renderer->FrameBegin();
-			
+
 			m_renderer->FrameEnd();
 			m_window->SwapBuffers();
 			m_window->PollEvents();

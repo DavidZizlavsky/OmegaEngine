@@ -4,12 +4,19 @@
 #include <GLEW/glew.h>
 
 namespace Omega {
+	struct MeshBufferObject {
+		GLuint vao;
+		GLuint vbo;
+		GLuint ebo;
+	};
+
 	class RendererOpenGL final : public Renderer {
 	private:
 		static bool isInitGLEW;
 		std::vector<RenderObject> m_renderObjects;
 		std::vector<bool> m_activeObjects;
 		std::vector<GLuint> m_shaderPrograms;
+		std::vector<MeshBufferObject> m_meshBufferObjects;
 
 		GLuint CompileShader(GLenum type, const char* source);
 	public:
