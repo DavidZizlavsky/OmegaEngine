@@ -82,6 +82,8 @@ namespace Omega {
 	// Register mesh and return a handle
 	MeshHandle RendererOpenGL::CreateMesh(MeshObject meshObject)
 	{
+		// TEST: what does sending nullptrs (0 size indices or vertices arrays)
+
 		GLuint vao = 0;
 		GLuint vbo = 0;
 		GLuint ebo = 0;
@@ -132,6 +134,8 @@ namespace Omega {
 		meshBufferObject.vao = vao;
 		meshBufferObject.vbo = vbo;
 		meshBufferObject.ebo = ebo;
+		meshBufferObject.verticesCount = meshObject.verticesCount;
+		meshBufferObject.indicesCount = meshObject.indicesCount;
 
 		// TODO: Size of a vector can get bigger than handle's data type
 		MeshHandle meshHandle = m_meshBufferObjects.size();
@@ -206,8 +210,11 @@ namespace Omega {
 	// Register material and return a handle
 	MaterialHandle RendererOpenGL::CreateMaterial(MaterialObject material)
 	{
-		// TODO: implement
-		return NULL;
+		// TODO: Size of a vector can get bigger than handle's data type
+		MaterialHandle materialHandle = m_materialObjects.size();
+		m_materialObjects.push_back(material);
+
+		return materialHandle;
 	}
 
 	// Register render object and return a handle
@@ -217,6 +224,32 @@ namespace Omega {
 		RenderObjectHandle handle = m_renderObjects.size();
 		m_renderObjects.push_back(renderObject);
 		m_activeObjects.push_back(handle);
+
 		return handle;
+	}
+
+	// Draws a single not-instanced and not-batched render object
+	void RendererOpenGL::Draw(RenderObject renderObject)
+	{
+		MaterialObject materialObject = m_materialObjects[renderObject.materialHandle];
+		MeshBufferObject meshBufferObject = m_meshBufferObjects[renderObject.meshHandle];
+		GLuint shaderProgram = m_shaderPrograms[materialObject.shaderProgramHandle];
+		// TODO: implement - materialObject.color and renderObject.modelMatrix
+		glUseProgram(shaderProgram);
+		glBindVertexArray(meshBufferObject.vao);
+		glDrawElements(
+			GL_TRIANGLES,
+			meshBufferObject.indicesCount,
+			GL_UNSIGNED_INT,
+			nullptr
+		);
+	}
+
+	// Renders all render objects
+	void RendererOpenGL::FrameEnd()
+	{
+		for (auto &renderObject : m_renderObjects) {
+			Draw(renderObject);
+		}
 	}
 }

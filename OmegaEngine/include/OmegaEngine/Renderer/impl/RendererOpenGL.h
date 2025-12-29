@@ -2,12 +2,15 @@
 #include "OmegaEngine/Renderer/Renderer.h"
 #include <vector>
 #include <GLEW/glew.h>
+#include <cstdint>
 
 namespace Omega {
 	struct MeshBufferObject {
 		GLuint vao;
 		GLuint vbo;
 		GLuint ebo;
+		uint32_t verticesCount;
+		uint32_t indicesCount;
 	};
 
 	class RendererOpenGL final : public Renderer {
@@ -17,8 +20,10 @@ namespace Omega {
 		std::vector<bool> m_activeObjects;
 		std::vector<GLuint> m_shaderPrograms;
 		std::vector<MeshBufferObject> m_meshBufferObjects;
+		std::vector<MaterialObject> m_materialObjects;
 
 		GLuint CompileShader(GLenum type, const char* source);
+		void Draw(RenderObject renderObject);
 	public:
 		RendererOpenGL();
 		~RendererOpenGL() override;
@@ -31,7 +36,7 @@ namespace Omega {
 		ShaderProgramHandle CreateShaderProgram(ShaderProgramObject shaderProgramObject) override;
 		MaterialHandle CreateMaterial(MaterialObject material) override;
 		RenderObjectHandle CreateRenderObject(RenderObject renderObject) override;
-		void FrameEnd() override {}
+		void FrameEnd() override;
 
 		static void InitGLEW();
 	};

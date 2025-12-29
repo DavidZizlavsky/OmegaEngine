@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cstdint>
+#include <GLM/fwd.hpp>
 
 namespace Omega {
 	void Engine::Init()
@@ -25,6 +26,12 @@ namespace Omega {
 
 		ShaderProgramHandle shaderProgramHandle = m_renderer->CreateShaderProgram(shaderProgramObject);
 
+		MaterialObject materialObject = {};
+		materialObject.shaderProgramHandle = shaderProgramHandle;
+		materialObject.color = glm::vec4(1, 1, 1, 1);
+
+		MaterialHandle materialHandle = m_renderer->CreateMaterial(materialObject);
+
 		Vertex vertices[] = { 
 			{glm::vec3(-1, 1, 0)},
 			{glm::vec3(-1, -1, 0)},
@@ -44,7 +51,11 @@ namespace Omega {
 		MeshHandle meshHandle = m_renderer->CreateMesh(meshObject);
 
 		RenderObject renderObject = {};
-		// TODO: continue
+		renderObject.materialHandle = materialHandle;
+		renderObject.meshHandle = meshHandle;
+		renderObject.modelMatrix = glm::mat4(1);
+
+		RenderObjectHandle renderObjectHandle = m_renderer->CreateRenderObject(renderObject);
 
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
