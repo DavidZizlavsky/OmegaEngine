@@ -2,6 +2,7 @@
 #include "OmegaEngine/Renderer/Renderer.h"
 #include "OmegaEngine/Renderer/impl/RendererOpenGL.h"
 #include <GLEW/glew.h>
+#include <GLM/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -234,8 +235,18 @@ namespace Omega {
 		MaterialObject materialObject = m_materialObjects[renderObject.materialHandle];
 		MeshBufferObject meshBufferObject = m_meshBufferObjects[renderObject.meshHandle];
 		GLuint shaderProgram = m_shaderPrograms[materialObject.shaderProgramHandle];
-		// TODO: implement - materialObject.color and renderObject.modelMatrix
+		// TODO: implement - renderObject.modelMatrix
+
 		glUseProgram(shaderProgram);
+
+		// TODO: change this to UBO or move uniform location to member variable
+		GLuint uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
+		glUniform4fv(
+			uColorLocation,
+			1,
+			glm::value_ptr(materialObject.color)
+		);
+
 		glBindVertexArray(meshBufferObject.vao);
 		glDrawElements(
 			GL_TRIANGLES,

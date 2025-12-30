@@ -32,7 +32,7 @@ namespace Omega {
 
 		MaterialObject materialObject = {};
 		materialObject.shaderProgramHandle = shaderProgramHandle;
-		materialObject.color = glm::vec4(1, 1, 1, 1);
+		materialObject.color = glm::vec4(1, 0, 0, 1);
 
 		MaterialHandle materialHandle = m_renderer->CreateMaterial(materialObject);
 
