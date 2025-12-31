@@ -235,17 +235,63 @@ namespace Omega {
 		MaterialObject materialObject = m_materialObjects[renderObject.materialHandle];
 		MeshBufferObject meshBufferObject = m_meshBufferObjects[renderObject.meshHandle];
 		GLuint shaderProgram = m_shaderPrograms[materialObject.shaderProgramHandle];
-		// TODO: implement - renderObject.modelMatrix
 
 		glUseProgram(shaderProgram);
 
 		// TODO: change this to UBO or move uniform location to member variable
-		GLuint uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
-		glUniform4fv(
-			uColorLocation,
-			1,
-			glm::value_ptr(materialObject.color)
-		);
+		GLint uColorLocation = glGetUniformLocation(shaderProgram, "u_Color");
+		if (uColorLocation != -1) {
+			glUniform4fv(
+				uColorLocation,
+				1,
+				glm::value_ptr(materialObject.color)
+			);
+		}
+		else {
+			std::cerr << "Color uniform location not found" << std::endl;
+		}
+
+		GLint uModelMatrixLocation = glGetUniformLocation(shaderProgram, "u_ModelMatrix");
+		if (uModelMatrixLocation != -1) {
+			glUniformMatrix4fv(
+				uModelMatrixLocation,
+				1,
+				GL_FALSE,
+				glm::value_ptr(renderObject.modelMatrix)
+			);
+		}
+		else {
+			std::cerr << "Model matrix uniform location not found" << std::endl;
+		}
+
+		// TODO: abstract this into a Camera - also view and projection can be multiplied on the CPU into one matrix
+		GLint uViewMatrixLocation = glGetUniformLocation(shaderProgram, "u_ViewMatrix");
+		if (uViewMatrixLocation != -1) {
+			glUniformMatrix4fv(
+				uViewMatrixLocation,
+				1,
+				GL_FALSE,
+				glm::value_ptr(glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)))
+			);
+		}
+		else {
+			std::cerr << "View matrix uniform location not found" << std::endl;
+		}
+
+		// TODO: abstract this into a Camera - also view and projection can be multiplied on the CPU into one matrix
+		// TODO: load values like framebuffer size from window's instance
+		GLint uProjectionMatrixLocation = glGetUniformLocation(shaderProgram, "u_ProjectionMatrix");
+		if (uProjectionMatrixLocation != -1) {
+			glUniformMatrix4fv(
+				uProjectionMatrixLocation,
+				1,
+				GL_FALSE,
+				glm::value_ptr(glm::perspective((float)glm::radians(60.0f), 600.0f / 400.0f, 0.1f, 100.0f))
+			);
+		}
+		else {
+			std::cerr << "Projection matrix uniform location not found" << std::endl;
+		}
 
 		glBindVertexArray(meshBufferObject.vao);
 		glDrawElements(
