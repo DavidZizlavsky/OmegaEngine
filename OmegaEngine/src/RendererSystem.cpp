@@ -1,5 +1,6 @@
 #include "OmegaEngine/Renderer/Renderer.h"
 #include "OmegaEngine/Renderer/impl/RendererOpenGL.h"
+#include <stdexcept>
 
 namespace Omega {
 	/*
@@ -21,6 +22,10 @@ namespace Omega {
 	 */
 	Renderer* RendererSystem::CreateRenderer() {
 		RendererOpenGL::InitGLEW();
-		return new RendererOpenGL();
+		RendererOpenGL* renderer = new RendererOpenGL();
+		if (renderer == nullptr) {
+			throw std::runtime_error("Failed to allocate memory for OpenGL renderer!");
+		}
+		return renderer;
 	}
 }
