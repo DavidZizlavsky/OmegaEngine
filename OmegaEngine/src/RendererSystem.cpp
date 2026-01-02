@@ -23,9 +23,6 @@ namespace Omega {
 	Renderer* RendererSystem::CreateRenderer() {
 		RendererOpenGL::InitGLEW();
 		RendererOpenGL* renderer = new RendererOpenGL();
-		if (renderer == nullptr) {
-			throw std::runtime_error("Failed to allocate memory for OpenGL renderer!");
-		}
 		return renderer;
 	}
 }

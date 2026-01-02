@@ -23,9 +23,6 @@ namespace Omega {
 	 */
 	Window* WindowSystem::CreateWindow(int width, int height, const char* title) {
 		WindowGLFW* window = new WindowGLFW(width, height, title);
-		if (window == nullptr) {
-			throw std::runtime_error("Failed to allocate memory for GLFW window!");
-		}
 		return window;
 	}
 }
