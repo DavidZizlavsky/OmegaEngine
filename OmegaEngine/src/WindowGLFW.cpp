@@ -63,6 +63,9 @@ namespace Omega {
 
 	void WindowGLFW::OnCallbackFramebufferResize(int width, int height)
 	{
+		m_framebufferSize.width = width;
+		m_framebufferSize.height = height;
+
 		if (m_resizeCallback) {
 			m_resizeCallback(width, height);
 		}
@@ -80,6 +83,7 @@ namespace Omega {
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, this);
 		glfwSetFramebufferSizeCallback(m_window, CallbackFramebufferResize);
+		glfwGetFramebufferSize(m_window, &m_framebufferSize.width, &m_framebufferSize.height);
 	}
 
 	/*
@@ -120,5 +124,13 @@ namespace Omega {
 	void WindowGLFW::SetResizeCallback(ResizeCallback callback)
 	{
 		m_resizeCallback = callback;
+	}
+
+	/*
+	 * Returns framebuffer size struct
+	 */
+	FramebufferSize WindowGLFW::GetFramebufferSize()
+	{
+		return m_framebufferSize;
 	}
 }

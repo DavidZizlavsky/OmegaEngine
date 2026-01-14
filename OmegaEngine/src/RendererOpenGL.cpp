@@ -285,6 +285,13 @@ namespace Omega {
 		);
 	}
 
+	// Update 
+	void RendererOpenGL::UpdateRenderObjectModelMatrix(RenderObjectHandle renderObjectHandle, glm::mat4 modelMatrix)
+	{
+		RenderObject& renderObject = m_renderObjects.at(renderObjectHandle);
+		renderObject.modelMatrix = modelMatrix;
+	}
+
 	// Update camera data
 	void RendererOpenGL::UpdateCameraData(CameraData cameraData)
 	{

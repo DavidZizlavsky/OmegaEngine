@@ -53,6 +53,7 @@ namespace Omega {
 		virtual ShaderProgramHandle CreateShaderProgram(ShaderProgramObject shaderProgramObject) = 0;
 		virtual MaterialHandle CreateMaterial(MaterialObject material) = 0;
 		virtual RenderObjectHandle CreateRenderObject(RenderObject renderObject) = 0;
+		virtual void UpdateRenderObjectModelMatrix(RenderObjectHandle renderObjectHandle, glm::mat4 modelMatrix) = 0;
 		virtual void UpdateCameraData(CameraData cameraData) = 0;
 		virtual void FrameEnd() = 0;
 

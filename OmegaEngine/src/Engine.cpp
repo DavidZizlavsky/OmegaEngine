@@ -40,18 +40,20 @@ namespace Omega {
 		Vertex vertices[] = { 
 			{glm::vec3(-1, 1, 0)},
 			{glm::vec3(-1, -1, 0)},
-			{glm::vec3(1, -1, 0)}
+			{glm::vec3(1, -1, 0)},
+			{glm::vec3(1, 1, 0)}
 		};
 
 		uint32_t indices[] = {
-			0, 1, 2
+			0, 1, 2,
+			2, 3, 0
 		};
 
 		MeshObject meshObject = {};
 		meshObject.vertices = vertices;
-		meshObject.verticesCount = 3;
+		meshObject.verticesCount = 4;
 		meshObject.indices = indices;
-		meshObject.indicesCount = 3;
+		meshObject.indicesCount = 6;
 
 		MeshHandle meshHandle = m_renderer->CreateMesh(meshObject);
 
@@ -62,17 +64,32 @@ namespace Omega {
 
 		RenderObjectHandle renderObjectHandle = m_renderer->CreateRenderObject(renderObject);
 
-		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-		glm::mat4 projectionMatrix = glm::perspective((float)glm::radians(60.0f), 600.0f / 400.0f, 0.1f, 100.0f);
 		CameraData cameraData = {};
-		cameraData.viewMatrix = viewMatrix;
-		cameraData.projectionMatrix = projectionMatrix;
+		cameraData.viewMatrix = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+
+		float rotation = 0;
+		constexpr float angleSpeed = glm::radians(45.0f);
+
+		m_timeFrameBefore = std::chrono::steady_clock::now();
 
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
+			auto now = std::chrono::steady_clock::now();
+			float deltaTime = std::chrono::duration<float>(now - m_timeFrameBefore).count();
+			m_timeFrameBefore = now;
+
 			m_renderer->FrameBegin();
+
+			rotation += angleSpeed * deltaTime;
+			glm::mat4 model = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+			m_renderer->UpdateRenderObjectModelMatrix(renderObjectHandle, model);
+
+			FramebufferSize framebufferSize = m_window->GetFramebufferSize();
+			cameraData.projectionMatrix = glm::perspective((float)glm::radians(60.0f), (float)framebufferSize.width / framebufferSize.height, 0.1f, 100.0f);
 			m_renderer->UpdateCameraData(cameraData);
+
 			m_renderer->FrameEnd();
+
 			m_window->SwapBuffers();
 			m_window->PollEvents();
 		}

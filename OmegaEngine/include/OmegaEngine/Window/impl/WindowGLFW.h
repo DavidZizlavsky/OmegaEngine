@@ -9,12 +9,16 @@ namespace Omega {
 
 		static bool isInitGLFW;
 		ResizeCallback m_resizeCallback;
+
+		FramebufferSize m_framebufferSize;
 	public:
 		WindowGLFW(int width, int height, const char* title);
 		~WindowGLFW();
 		int WindowShouldClose() override;
 		void PollEvents() override;
 		void SwapBuffers() override;
+
+		FramebufferSize GetFramebufferSize() override;
 
 		void SetResizeCallback(ResizeCallback callback) override;
 		void OnCallbackFramebufferResize(int width, int height);

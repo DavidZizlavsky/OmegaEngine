@@ -43,6 +43,7 @@ namespace Omega {
 		ShaderProgramHandle CreateShaderProgram(ShaderProgramObject shaderProgramObject) override;
 		MaterialHandle CreateMaterial(MaterialObject material) override;
 		RenderObjectHandle CreateRenderObject(RenderObject renderObject) override;
+		void UpdateRenderObjectModelMatrix(RenderObjectHandle renderObjectHandle, glm::mat4 modelMatrix) override;
 		void UpdateCameraData(CameraData cameraData) override;
 		void FrameEnd() override;
 
