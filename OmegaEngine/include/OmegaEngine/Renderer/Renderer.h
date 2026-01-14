@@ -36,6 +36,11 @@ namespace Omega {
 		uint32_t indicesCount = 0;
 	};
 
+	struct OMEGA_API CameraData {
+		glm::mat4 viewMatrix = 1;
+		glm::mat4 projectionMatrix = 1;
+	};
+
 	class OMEGA_API Renderer {
 	public:
 		virtual ~Renderer() = default;
@@ -48,6 +53,7 @@ namespace Omega {
 		virtual ShaderProgramHandle CreateShaderProgram(ShaderProgramObject shaderProgramObject) = 0;
 		virtual MaterialHandle CreateMaterial(MaterialObject material) = 0;
 		virtual RenderObjectHandle CreateRenderObject(RenderObject renderObject) = 0;
+		virtual void UpdateCameraData(CameraData cameraData) = 0;
 		virtual void FrameEnd() = 0;
 
 		virtual void ResizeFramebuffer(int width, int height) {}

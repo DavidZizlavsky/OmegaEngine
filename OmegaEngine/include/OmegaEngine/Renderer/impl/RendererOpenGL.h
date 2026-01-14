@@ -13,6 +13,11 @@ namespace Omega {
 		uint32_t indicesCount;
 	};
 
+	struct alignas(16) FrameData {
+		glm::mat4 viewMatrix = 1;
+		glm::mat4 projectionMatrix = 1;
+	};
+
 	class RendererOpenGL final : public Renderer {
 	private:
 		static bool isInitGLEW;
@@ -21,6 +26,8 @@ namespace Omega {
 		std::vector<GLuint> m_shaderPrograms;
 		std::vector<MeshBufferObject> m_meshBufferObjects;
 		std::vector<MaterialObject> m_materialObjects;
+
+		GLuint m_frameUBO = 0;
 
 		GLuint CompileShader(GLenum type, const char* source);
 		void Draw(RenderObject renderObject);
@@ -36,6 +43,7 @@ namespace Omega {
 		ShaderProgramHandle CreateShaderProgram(ShaderProgramObject shaderProgramObject) override;
 		MaterialHandle CreateMaterial(MaterialObject material) override;
 		RenderObjectHandle CreateRenderObject(RenderObject renderObject) override;
+		void UpdateCameraData(CameraData cameraData) override;
 		void FrameEnd() override;
 
 		void ResizeFramebuffer(int width, int height) override;

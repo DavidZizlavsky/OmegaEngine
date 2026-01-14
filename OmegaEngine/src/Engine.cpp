@@ -5,7 +5,8 @@
 #include <iostream>
 #include <string>
 #include <cstdint>
-#include <GLM/fwd.hpp>
+#include <GLM/glm.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 
 namespace Omega {
 	void Engine::Init()
@@ -61,10 +62,16 @@ namespace Omega {
 
 		RenderObjectHandle renderObjectHandle = m_renderer->CreateRenderObject(renderObject);
 
+		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		glm::mat4 projectionMatrix = glm::perspective((float)glm::radians(60.0f), 600.0f / 400.0f, 0.1f, 100.0f);
+		CameraData cameraData = {};
+		cameraData.viewMatrix = viewMatrix;
+		cameraData.projectionMatrix = projectionMatrix;
+
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			m_renderer->FrameBegin();
-
+			m_renderer->UpdateCameraData(cameraData);
 			m_renderer->FrameEnd();
 			m_window->SwapBuffers();
 			m_window->PollEvents();

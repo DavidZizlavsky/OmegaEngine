@@ -45,6 +45,16 @@ namespace Omega {
 	{
 		// Set default clear color
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+		// Frame UBO initialization
+		glCreateBuffers(1, &m_frameUBO);
+		glNamedBufferStorage(
+			m_frameUBO,
+			sizeof(FrameData),
+			nullptr,
+			GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT
+		);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_frameUBO);
 	}
 	
 	/*
@@ -52,7 +62,7 @@ namespace Omega {
 	 */
 	RendererOpenGL::~RendererOpenGL() 
 	{
-		
+		glDeleteBuffers(1, &m_frameUBO);
 	}
 
 #ifdef DEBUG
@@ -264,34 +274,7 @@ namespace Omega {
 			std::cerr << "Model matrix uniform location not found" << std::endl;
 		}
 
-		// TODO: abstract this into a Camera - also view and projection can be multiplied on the CPU into one matrix
-		GLint uViewMatrixLocation = glGetUniformLocation(shaderProgram, "u_ViewMatrix");
-		if (uViewMatrixLocation != -1) {
-			glUniformMatrix4fv(
-				uViewMatrixLocation,
-				1,
-				GL_FALSE,
-				glm::value_ptr(glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)))
-			);
-		}
-		else {
-			std::cerr << "View matrix uniform location not found" << std::endl;
-		}
-
-		// TODO: abstract this into a Camera - also view and projection can be multiplied on the CPU into one matrix
-		// TODO: load values like framebuffer size from window's instance
-		GLint uProjectionMatrixLocation = glGetUniformLocation(shaderProgram, "u_ProjectionMatrix");
-		if (uProjectionMatrixLocation != -1) {
-			glUniformMatrix4fv(
-				uProjectionMatrixLocation,
-				1,
-				GL_FALSE,
-				glm::value_ptr(glm::perspective((float)glm::radians(60.0f), 600.0f / 400.0f, 0.1f, 100.0f))
-			);
-		}
-		else {
-			std::cerr << "Projection matrix uniform location not found" << std::endl;
-		}
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_frameUBO);
 
 		glBindVertexArray(meshBufferObject.vao);
 		glDrawElements(
@@ -300,6 +283,25 @@ namespace Omega {
 			GL_UNSIGNED_INT,
 			nullptr
 		);
+	}
+
+	// Update camera data
+	void RendererOpenGL::UpdateCameraData(CameraData cameraData)
+	{
+		FrameData frameData = {};
+		frameData.projectionMatrix = cameraData.projectionMatrix;
+		frameData.viewMatrix = cameraData.viewMatrix;
+
+		void* mappedPtr = glMapNamedBufferRange(
+			m_frameUBO,
+			0,
+			sizeof(FrameData),
+			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT
+		);
+
+		std::memcpy(mappedPtr, &frameData, sizeof(FrameData));
+
+		glUnmapNamedBuffer(m_frameUBO);
 	}
 
 	// Renders all render objects
