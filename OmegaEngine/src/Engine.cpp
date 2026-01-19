@@ -38,22 +38,25 @@ namespace Omega {
 		MaterialHandle materialHandle = m_renderer->CreateMaterial(materialObject);
 
 		Vertex vertices[] = { 
-			{glm::vec3(-1, 1, 0)},
-			{glm::vec3(-1, -1, 0)},
-			{glm::vec3(1, -1, 0)},
-			{glm::vec3(1, 1, 0)}
+			{glm::vec3(0, 1, 0)},
+			{glm::vec3(-1, -1, -1)},
+			{glm::vec3(-1, -1, 1)},
+			{glm::vec3(1, -1, 1)},
+			{glm::vec3(1, -1, -1)}
 		};
 
-		uint32_t indices[] = {
+		Index indices[] = {
 			0, 1, 2,
-			2, 3, 0
+			0, 2, 3,
+			0, 3, 4,
+			0, 4, 1
 		};
 
 		MeshObject meshObject = {};
 		meshObject.vertices = vertices;
-		meshObject.verticesCount = 4;
+		meshObject.verticesCount = sizeof(vertices) / sizeof(Vertex);
 		meshObject.indices = indices;
-		meshObject.indicesCount = 6;
+		meshObject.indicesCount = sizeof(indices) / sizeof(Index);
 
 		MeshHandle meshHandle = m_renderer->CreateMesh(meshObject);
 

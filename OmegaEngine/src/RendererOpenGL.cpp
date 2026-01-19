@@ -46,6 +46,11 @@ namespace Omega {
 		// Set default clear color
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
+		// Enable culling
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+
 		// Frame UBO initialization
 		glCreateBuffers(1, &m_frameUBO);
 		glNamedBufferStorage(

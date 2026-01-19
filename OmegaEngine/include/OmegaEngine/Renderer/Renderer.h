@@ -9,6 +9,8 @@ namespace Omega {
 	using RenderObjectHandle = uint32_t;
 	using ShaderProgramHandle = uint32_t;
 
+	using Index = uint32_t;
+
 	struct OMEGA_API RenderObject {
 		MeshHandle meshHandle;
 		MaterialHandle materialHandle;
