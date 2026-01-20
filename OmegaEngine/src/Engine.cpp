@@ -33,32 +33,13 @@ namespace Omega {
 
 		MaterialObject materialObject = {};
 		materialObject.shaderProgramHandle = shaderProgramHandle;
-		materialObject.color = glm::vec4(1, 0, 0, 1);
+		materialObject.color = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
 
 		MaterialHandle materialHandle = m_renderer->CreateMaterial(materialObject);
 
-		Vertex vertices[] = { 
-			{glm::vec3(0, 1, 0)},
-			{glm::vec3(-1, -1, -1)},
-			{glm::vec3(-1, -1, 1)},
-			{glm::vec3(1, -1, 1)},
-			{glm::vec3(1, -1, -1)}
-		};
+		MeshObject test = File::LoadMeshFromObj("assets/meshes/test.obj");
 
-		Index indices[] = {
-			0, 1, 2,
-			0, 2, 3,
-			0, 3, 4,
-			0, 4, 1
-		};
-
-		MeshObject meshObject = {};
-		meshObject.vertices = vertices;
-		meshObject.verticesCount = sizeof(vertices) / sizeof(Vertex);
-		meshObject.indices = indices;
-		meshObject.indicesCount = sizeof(indices) / sizeof(Index);
-
-		MeshHandle meshHandle = m_renderer->CreateMesh(meshObject);
+		MeshHandle meshHandle = m_renderer->CreateMesh(test);
 
 		RenderObject renderObject = {};
 		renderObject.materialHandle = materialHandle;
@@ -68,7 +49,7 @@ namespace Omega {
 		RenderObjectHandle renderObjectHandle = m_renderer->CreateRenderObject(renderObject);
 
 		CameraData cameraData = {};
-		cameraData.viewMatrix = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		cameraData.viewMatrix = glm::lookAt(glm::vec3(1, 2, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 		float rotation = 0;
 		constexpr float angleSpeed = glm::radians(45.0f);
@@ -88,8 +69,10 @@ namespace Omega {
 			m_renderer->UpdateRenderObjectModelMatrix(renderObjectHandle, model);
 
 			FramebufferSize framebufferSize = m_window->GetFramebufferSize();
-			cameraData.projectionMatrix = glm::perspective((float)glm::radians(60.0f), (float)framebufferSize.width / framebufferSize.height, 0.1f, 100.0f);
-			m_renderer->UpdateCameraData(cameraData);
+			if (framebufferSize.height != 0) {
+				cameraData.projectionMatrix = glm::perspective((float)glm::radians(60.0f), (float)framebufferSize.width / framebufferSize.height, 0.1f, 100.0f);
+				m_renderer->UpdateCameraData(cameraData);
+			}
 
 			m_renderer->FrameEnd();
 

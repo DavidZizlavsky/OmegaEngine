@@ -51,6 +51,9 @@ namespace Omega {
 		glCullFace(GL_BACK);
 		glFrontFace(GL_CCW);
 
+		// Multisampling
+		glEnable(GL_MULTISAMPLE);
+
 		// Frame UBO initialization
 		glCreateBuffers(1, &m_frameUBO);
 		glNamedBufferStorage(
