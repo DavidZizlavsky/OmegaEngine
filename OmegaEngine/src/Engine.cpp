@@ -37,7 +37,10 @@ namespace Omega {
 
 		MaterialHandle materialHandle = m_renderer->CreateMaterial(materialObject);
 
-		MeshObject test = File::LoadMeshFromObj("assets/meshes/test.obj");
+		auto timeStart = std::chrono::high_resolution_clock::now();
+		MeshObject test = File::LoadMeshFromObj("assets/meshes/AMV.obj");
+		auto timeEnd = std::chrono::high_resolution_clock::now();
+		std::cout << "Time to load 3D model: " << std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart) << "\n";
 
 		MeshHandle meshHandle = m_renderer->CreateMesh(test);
 

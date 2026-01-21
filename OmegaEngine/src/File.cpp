@@ -5,6 +5,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
+#include <cstdlib>
+#include <ios>
+#include <cstdio>
 
 namespace Omega {
     // Reads text file content and returns it as a string
@@ -28,44 +32,57 @@ namespace Omega {
             throw std::runtime_error("Failed to open file: " + path + "!");
         }
 
+        std::string line;
+        unsigned long long vertexCount = 0;
+        while (std::getline(file, line)) {
+            if (line[0] == 'v' && line[1] == ' ') {
+                vertexCount++;
+            }
+        }
+
         std::vector<Vertex> vertices = std::vector<Vertex>();
         std::vector<Index> indices = std::vector<Index>();
 
-        std::string line;
+        vertices.reserve(vertexCount);
+        indices.reserve(vertexCount * 6);
 
+        std::vector<Index> face = std::vector<Index>();
+        face.reserve(64);
+
+        file.clear();
+        file.seekg(0, std::ios_base::beg);
         while (std::getline(file, line)) {
             if (line.empty() || line[0] == '#')
                 continue;
 
-            std::istringstream iss(line);
-            std::string type;
-            iss >> type;
+            if (line[0] == 'v' && line[1] == ' ') {
+                Vertex vertex{};
 
-            if (type == "v") {
-                Vertex vertex;
-                iss >> vertex.position.x >> vertex.position.y >> vertex.position.z;
+                if (std::sscanf(line.c_str() + 2, "%f %f %f", &vertex.position.x, &vertex.position.y, &vertex.position.z) != 3) {
+                    throw std::runtime_error("Failed to parse .obj format!");
+                }
                 vertices.push_back(vertex);
             }
-            else if (type == "f") {
-                std::string vertexString;
-                std::vector<Index> face = std::vector<Index>();
-                
-                while (iss >> vertexString) {
-                    std::istringstream viss(vertexString);
-                    std::string v, vt, vn;
+            else if (line[0] == 'f' && line[1] == ' ') {
+                const char* stringPointer = line.c_str() + 2;
+                while (*stringPointer) {
+                    unsigned long index = std::strtoul(stringPointer, const_cast<char**>(&stringPointer), 10);
+                    face.push_back(index - 1);
 
-                    std::getline(viss, v, '/');
-                    std::getline(viss, vt, '/');
-                    std::getline(viss, vn, '/');
-
-                    face.push_back(std::stoi(v) - 1);
+                    while (*stringPointer && *stringPointer != ' ') {
+                        stringPointer++;
+                    }
+                    if (*stringPointer == ' ') {
+                        stringPointer++;
+                    }
                 }
 
                 for (int i = 1; i < face.size(); i++) {
-                    indices.push_back(face.at(0));
-                    indices.push_back(face.at(i-1));
-                    indices.push_back(face.at(i));
+                    indices.push_back(face[0]);
+                    indices.push_back(face[i-1]);
+                    indices.push_back(face[i]);
                 }
+                face.clear();
             }
         } 
 
