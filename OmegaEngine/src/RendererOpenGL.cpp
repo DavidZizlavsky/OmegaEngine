@@ -54,6 +54,11 @@ namespace Omega {
 		// Multisampling
 		glEnable(GL_MULTISAMPLE);
 
+		// Enable depth test
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_TRUE);
+
 		// Frame UBO initialization
 		glCreateBuffers(1, &m_frameUBO);
 		glNamedBufferStorage(
@@ -95,7 +100,7 @@ namespace Omega {
 	// Start each frame by clearing the buffer
 	void RendererOpenGL::FrameBegin()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	// Register mesh and return a handle
@@ -148,6 +153,17 @@ namespace Omega {
 			offsetof(Vertex, position) // Relative offset
 		);
 		glVertexArrayAttribBinding(vao, 0, 0);
+
+		glEnableVertexArrayAttrib(vao, 1);
+		glVertexArrayAttribFormat(
+			vao,
+			1,
+			3,
+			GL_FLOAT,
+			GL_FALSE,
+			offsetof(Vertex, normal)
+		);
+		glVertexArrayAttribBinding(vao, 1, 0);
 
 		MeshBufferObject meshBufferObject = {};
 		meshBufferObject.vao = vao;

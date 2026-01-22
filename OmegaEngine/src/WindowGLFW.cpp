@@ -30,6 +30,7 @@ namespace Omega {
 
 		// TODO: Abstract constant value into config struct
 		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
 #ifdef DEBUG
 		// Use debug OpenGL context but only in debug building configuration

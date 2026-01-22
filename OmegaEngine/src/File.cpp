@@ -42,9 +42,11 @@ namespace Omega {
 
         std::vector<Vertex> vertices = std::vector<Vertex>();
         std::vector<Index> indices = std::vector<Index>();
+        std::vector<glm::vec3> vertexNormals = std::vector<glm::vec3>();
 
         vertices.reserve(vertexCount);
         indices.reserve(vertexCount * 6);
+        vertexNormals.reserve(vertexCount);
 
         std::vector<Index> face = std::vector<Index>();
         face.reserve(64);
@@ -63,12 +65,26 @@ namespace Omega {
                 }
                 vertices.push_back(vertex);
             }
+            else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+                float x, y, z;
+                if (std::sscanf(line.c_str() + 3, "%f %f %f", &x, &y, &z) != 3) {
+                    throw std::runtime_error("Failed to parse .obj format!");
+                }
+                vertexNormals.push_back(glm::vec3(x, y, z));
+            }
             else if (line[0] == 'f' && line[1] == ' ') {
                 const char* stringPointer = line.c_str() + 2;
                 while (*stringPointer) {
                     unsigned long index = std::strtoul(stringPointer, const_cast<char**>(&stringPointer), 10);
                     face.push_back(index - 1);
 
+                    if (stringPointer[0] == '/' && stringPointer[1] != '/') {
+                        unsigned long indexVt = std::strtoul(stringPointer + 1, const_cast<char**>(&stringPointer), 10);
+                        if (stringPointer[0] == '/' && stringPointer[1] != '/') {
+                            unsigned long indexVn = std::strtoul(stringPointer + 1, const_cast<char**>(&stringPointer), 10);
+                            vertices[index - 1].normal = vertexNormals[indexVn - 1];
+                        }
+                    }
                     while (*stringPointer && *stringPointer != ' ') {
                         stringPointer++;
                     }

@@ -29,6 +29,7 @@ namespace Omega {
 
 	struct OMEGA_API Vertex {
 		glm::vec3 position;
+		glm::vec3 normal;
 	};
 
 	struct OMEGA_API MeshObject {
