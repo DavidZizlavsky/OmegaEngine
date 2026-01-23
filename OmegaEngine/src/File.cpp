@@ -93,7 +93,7 @@ namespace Omega {
                     }
                 }
 
-                for (int i = 1; i < face.size(); i++) {
+                for (int i = 2; i < face.size(); i++) {
                     indices.push_back(face[0]);
                     indices.push_back(face[i-1]);
                     indices.push_back(face[i]);
