@@ -34,73 +34,131 @@ namespace Omega {
 
         std::string line;
         unsigned long long vertexCount = 0;
+        unsigned long long vertexNormalCount = 0;
+        unsigned long long faceCount = 0;
         while (std::getline(file, line)) {
             if (line[0] == 'v' && line[1] == ' ') {
                 vertexCount++;
+            }
+            else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+                vertexNormalCount++;
+            } 
+            else if (line[0] == 'f' && line[1] == ' ') {
+                faceCount++;
+            }
+        }
+
+        struct FaceData {
+            size_t vertexIndex, vertexTextureIndex, vertexNormalIndex = 0;
+        };
+
+        struct Triangle {
+            FaceData x, y, z;
+        };
+
+        std::vector<glm::vec3> extractedVertices = std::vector<glm::vec3>();
+        extractedVertices.reserve(vertexCount);
+        std::vector<glm::vec3> extractedVertexNormals = std::vector<glm::vec3>();
+        extractedVertexNormals.reserve(vertexNormalCount);
+        std::vector<Triangle> extractedTriangles = std::vector<Triangle>();
+
+        std::vector<FaceData> faceBuffer = std::vector<FaceData>();
+        faceBuffer.reserve(64);
+
+        file.clear();
+        file.seekg(0, std::ios_base::beg);
+        while (std::getline(file, line)) {
+            if (line[0] == 'v' && line[1] == ' ') {
+                glm::vec3 vertexData = {};
+                if (std::sscanf(line.c_str() + 2, "%f %f %f", &vertexData.x, &vertexData.y, &vertexData.z) != 3) {
+                    throw std::runtime_error("Failed to parse vertex data!");
+                }
+                extractedVertices.push_back(vertexData);
+            }
+            else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+                glm::vec3 vertexNormalData = {};
+                if (std::sscanf(line.c_str() + 3, "%f %f %f", &vertexNormalData.x, &vertexNormalData.y, &vertexNormalData.z) != 3) {
+                    throw std::runtime_error("Failed to parse vertex normal data!");
+                }
+                extractedVertexNormals.push_back(vertexNormalData);
+            }
+            else if (line[0] == 'v' && line[1] == 't' && line[2] == ' ') {
+                glm::vec2 vertexTextureData = {};
+                if (std::sscanf(line.c_str() + 3, "%f %f", &vertexTextureData.x, &vertexTextureData.y) != 2) {
+                    throw std::runtime_error("Failed to parse vertex texture data!");
+                }
+                // TODO: add UV logic
+            }
+            else if (line[0] == 'f' && line[1] == ' ') {
+                const char* charPointer = line.c_str() + 2;
+                std::size_t positionOffset = 0;
+                while (true) {
+                    FaceData faceData = {};
+                    int parsedVertexIndex = std::stoi(charPointer, &positionOffset, 10);
+                    charPointer += positionOffset + 1;
+                    int parsedVertexTextureIndex = std::stoi(charPointer, &positionOffset, 10);
+                    charPointer += positionOffset + 1;
+                    int parsedVertexNormalIndex = std::stoi(charPointer, &positionOffset, 10);
+                    charPointer += positionOffset;
+                    faceData.vertexIndex = static_cast<size_t>(parsedVertexIndex) - 1;
+                    faceData.vertexTextureIndex = static_cast<size_t>(parsedVertexTextureIndex) - 1;
+                    faceData.vertexNormalIndex = static_cast<size_t>(parsedVertexNormalIndex) - 1;
+                    faceBuffer.push_back(faceData);
+                    if (*charPointer != '\0') {
+                        charPointer++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                for (int i = 2; i < faceBuffer.size(); i++) {
+                    Triangle triangle = {};
+                    triangle.x = faceBuffer[0];
+                    triangle.y = faceBuffer[static_cast<size_t>(i) - 1];
+                    triangle.z = faceBuffer[i];
+                    extractedTriangles.push_back(triangle);
+                }
+                faceBuffer.clear();
             }
         }
 
         std::vector<Vertex> vertices = std::vector<Vertex>();
         std::vector<Index> indices = std::vector<Index>();
-        std::vector<glm::vec3> vertexNormals = std::vector<glm::vec3>();
 
-        vertices.reserve(vertexCount);
-        indices.reserve(vertexCount * 6);
-        vertexNormals.reserve(vertexCount);
+        vertices.reserve(extractedTriangles.size() * 3);
+        indices.reserve(extractedTriangles.size() * 3);
 
-        std::vector<Index> face = std::vector<Index>();
-        face.reserve(64);
+        for (int i = 0; i < extractedTriangles.size(); i++) {
+            Triangle triangle = extractedTriangles[i];
+            glm::vec3 vertex = extractedVertices[triangle.x.vertexIndex];
+            glm::vec3 vertexNormal = extractedVertexNormals[triangle.x.vertexNormalIndex];
+            Vertex vert = {};
+            vert.position = vertex;
+            vert.normal = vertexNormal;
+            Index index = vertices.size();
+            vertices.push_back(vert);
+            indices.push_back(index);
 
-        file.clear();
-        file.seekg(0, std::ios_base::beg);
-        while (std::getline(file, line)) {
-            if (line.empty() || line[0] == '#')
-                continue;
+            triangle = extractedTriangles[i];
+            vertex = extractedVertices[triangle.y.vertexIndex];
+            vertexNormal = extractedVertexNormals[triangle.y.vertexNormalIndex];
+            vert = {};
+            vert.position = vertex;
+            vert.normal = vertexNormal;
+            index = vertices.size();
+            vertices.push_back(vert);
+            indices.push_back(index);
 
-            if (line[0] == 'v' && line[1] == ' ') {
-                Vertex vertex{};
-
-                if (std::sscanf(line.c_str() + 2, "%f %f %f", &vertex.position.x, &vertex.position.y, &vertex.position.z) != 3) {
-                    throw std::runtime_error("Failed to parse .obj format!");
-                }
-                vertices.push_back(vertex);
-            }
-            else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
-                float x, y, z;
-                if (std::sscanf(line.c_str() + 3, "%f %f %f", &x, &y, &z) != 3) {
-                    throw std::runtime_error("Failed to parse .obj format!");
-                }
-                vertexNormals.push_back(glm::vec3(x, y, z));
-            }
-            else if (line[0] == 'f' && line[1] == ' ') {
-                const char* stringPointer = line.c_str() + 2;
-                while (*stringPointer) {
-                    unsigned long index = std::strtoul(stringPointer, const_cast<char**>(&stringPointer), 10);
-                    face.push_back(index - 1);
-
-                    if (stringPointer[0] == '/' && stringPointer[1] != '/') {
-                        unsigned long indexVt = std::strtoul(stringPointer + 1, const_cast<char**>(&stringPointer), 10);
-                        if (stringPointer[0] == '/' && stringPointer[1] != '/') {
-                            unsigned long indexVn = std::strtoul(stringPointer + 1, const_cast<char**>(&stringPointer), 10);
-                            vertices[index - 1].normal = vertexNormals[indexVn - 1];
-                        }
-                    }
-                    while (*stringPointer && *stringPointer != ' ') {
-                        stringPointer++;
-                    }
-                    if (*stringPointer == ' ') {
-                        stringPointer++;
-                    }
-                }
-
-                for (int i = 2; i < face.size(); i++) {
-                    indices.push_back(face[0]);
-                    indices.push_back(face[i-1]);
-                    indices.push_back(face[i]);
-                }
-                face.clear();
-            }
-        } 
+            triangle = extractedTriangles[i];
+            vertex = extractedVertices[triangle.z.vertexIndex];
+            vertexNormal = extractedVertexNormals[triangle.z.vertexNormalIndex];
+            vert = {};
+            vert.position = vertex;
+            vert.normal = vertexNormal;
+            index = vertices.size();
+            vertices.push_back(vert);
+            indices.push_back(index);
+        }
 
         MeshObject mo = {};
         mo.vertices = new Vertex[vertices.size()];
@@ -109,6 +167,7 @@ namespace Omega {
         std::memcpy(mo.indices, indices.data(), indices.size() * sizeof(Index));
         mo.verticesCount = vertices.size();
         mo.indicesCount = indices.size();
+
         return mo;
     }
 }

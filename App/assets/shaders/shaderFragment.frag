@@ -31,4 +31,7 @@ void main() {
     vec3 result = ambient + diffuse + specular;
 
     outColor = vec4(result, 1.0);
+
+    // Normal visualizer:
+    //outColor = vec4(normalize(Normal) * 0.5 + 0.5, 1.0);
 }
