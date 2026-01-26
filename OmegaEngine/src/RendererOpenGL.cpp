@@ -68,6 +68,16 @@ namespace Omega {
 			GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT
 		);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_frameUBO);
+
+		// Light UBO initialization
+		glCreateBuffers(1, &m_lightUBO);
+		glNamedBufferStorage(
+			m_lightUBO,
+			sizeof(LightData),
+			nullptr,
+			GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT
+		);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_lightUBO);
 	}
 	
 	/*
@@ -76,6 +86,7 @@ namespace Omega {
 	RendererOpenGL::~RendererOpenGL() 
 	{
 		glDeleteBuffers(1, &m_frameUBO);
+		glDeleteBuffers(1, &m_lightUBO);
 	}
 
 #ifdef DEBUG
@@ -299,6 +310,7 @@ namespace Omega {
 		}
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_frameUBO);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_lightUBO);
 
 		glBindVertexArray(meshBufferObject.vao);
 		glDrawElements(
@@ -333,6 +345,29 @@ namespace Omega {
 		std::memcpy(mappedPtr, &frameData, sizeof(FrameData));
 
 		glUnmapNamedBuffer(m_frameUBO);
+	}
+
+	// Update light data
+	void RendererOpenGL::UpdateLightData(std::vector<PointLight>& lights, glm::vec3 ambientColor)
+	{
+		LightData lightData = {};
+		lightData.ambientColor = glm::vec4(ambientColor.x, ambientColor.y, ambientColor.z, 1.0f);
+		lightData.lightCount = lights.size();
+		for (int i = 0; i < lightData.lightCount; i++) {
+			lightData.lights[i].position = lights[i].position;
+			lightData.lights[i].color = lights[i].color;
+		}
+
+		void* mappedPtr = glMapNamedBufferRange(
+			m_lightUBO,
+			0,
+			sizeof(LightData),
+			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT
+		);
+
+		std::memcpy(mappedPtr, &lightData, sizeof(LightData));
+
+		glUnmapNamedBuffer(m_lightUBO);
 	}
 
 	// Renders all render objects

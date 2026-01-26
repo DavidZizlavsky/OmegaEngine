@@ -17,6 +17,17 @@ namespace Omega {
 		glm::mat4 viewMatrix = 1;
 		glm::mat4 projectionMatrix = 1;
 	};
+	
+	struct alignas(16) PointLightData {
+		glm::vec4 position;
+		glm::vec4 color;
+	};
+
+	struct alignas(16) LightData {
+		glm::vec4 ambientColor;
+		int lightCount = 0;
+		PointLightData lights[16];
+	};
 
 	class RendererOpenGL final : public Renderer {
 	private:
@@ -28,6 +39,7 @@ namespace Omega {
 		std::vector<MaterialObject> m_materialObjects;
 
 		GLuint m_frameUBO = 0;
+		GLuint m_lightUBO = 0;
 
 		GLuint CompileShader(GLenum type, const char* source);
 		void Draw(RenderObject renderObject);
@@ -45,6 +57,7 @@ namespace Omega {
 		RenderObjectHandle CreateRenderObject(RenderObject renderObject) override;
 		void UpdateRenderObjectModelMatrix(RenderObjectHandle renderObjectHandle, glm::mat4 modelMatrix) override;
 		void UpdateCameraData(CameraData cameraData) override;
+		void UpdateLightData(std::vector<PointLight>& lights, glm::vec3 ambientColor) override;
 		void FrameEnd() override;
 
 		void ResizeFramebuffer(int width, int height) override;

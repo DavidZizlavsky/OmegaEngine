@@ -44,6 +44,11 @@ namespace Omega {
 		glm::mat4 projectionMatrix = 1;
 	};
 
+	struct OMEGA_API PointLight {
+		glm::vec4 position;
+		glm::vec4 color;
+	};
+
 	class OMEGA_API Renderer {
 	public:
 		virtual ~Renderer() = default;
@@ -58,6 +63,7 @@ namespace Omega {
 		virtual RenderObjectHandle CreateRenderObject(RenderObject renderObject) = 0;
 		virtual void UpdateRenderObjectModelMatrix(RenderObjectHandle renderObjectHandle, glm::mat4 modelMatrix) = 0;
 		virtual void UpdateCameraData(CameraData cameraData) = 0;
+		virtual void UpdateLightData(std::vector<PointLight>& lights, glm::vec3 ambientColor) = 0;
 		virtual void FrameEnd() = 0;
 
 		virtual void ResizeFramebuffer(int width, int height) {}

@@ -54,6 +54,14 @@ namespace Omega {
 		CameraData cameraData = {};
 		cameraData.viewMatrix = glm::lookAt(glm::vec3(1, 2, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
+		float totalTime = 0.0f;
+
+		std::vector<PointLight> lights = std::vector<PointLight>();
+		PointLight pointLight = {};
+		pointLight.position = glm::vec4(0, 3, 2, 1);
+		pointLight.color = glm::vec4(0.9f, 0.9f, 1.0f, 0.95f);
+		lights.push_back(pointLight);
+
 		float rotation = 0;
 		constexpr float angleSpeed = glm::radians(45.0f);
 
@@ -66,6 +74,13 @@ namespace Omega {
 			m_timeFrameBefore = now;
 
 			m_renderer->FrameBegin();
+
+			totalTime += deltaTime;
+			constexpr float omega = glm::two_pi<float>() * 2.0f;
+			float intensity = 0.6f + 0.2f * std::sin(omega * totalTime);
+			lights[0].color.a = glm::clamp(intensity, 0.2f, 1.0f);
+			
+			m_renderer->UpdateLightData(lights, glm::vec3(0.06f, 0.06f, 0.07f));
 
 			rotation += angleSpeed * deltaTime;
 			glm::mat4 model = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
