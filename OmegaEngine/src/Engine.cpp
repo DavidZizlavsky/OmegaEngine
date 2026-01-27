@@ -59,7 +59,7 @@ namespace Omega {
 		std::vector<PointLight> lights = std::vector<PointLight>();
 		PointLight pointLight = {};
 		pointLight.position = glm::vec4(0, 3, 2, 1);
-		pointLight.color = glm::vec4(0.9f, 0.9f, 1.0f, 0.95f);
+		pointLight.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		lights.push_back(pointLight);
 
 		float rotation = 0;
@@ -75,11 +75,6 @@ namespace Omega {
 
 			m_renderer->FrameBegin();
 
-			totalTime += deltaTime;
-			constexpr float omega = glm::two_pi<float>() * 2.0f;
-			float intensity = 0.6f + 0.2f * std::sin(omega * totalTime);
-			lights[0].color.a = glm::clamp(intensity, 0.2f, 1.0f);
-			
 			m_renderer->UpdateLightData(lights, glm::vec3(0.06f, 0.06f, 0.07f));
 
 			rotation += angleSpeed * deltaTime;
