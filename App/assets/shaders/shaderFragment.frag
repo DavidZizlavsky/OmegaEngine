@@ -1,6 +1,14 @@
 #version 450 core
 layout(location = 0) out vec4 outColor;
 
+layout(std140, binding = 0) uniform FrameData
+{
+    mat4 u_ViewMatrix;
+    mat4 u_ProjectionMatrix;
+    mat4 u_ViewProjectionMatrix;
+    vec3 u_CameraPosition;
+};
+
 struct PointLight
 {
     vec4 position;
@@ -33,7 +41,7 @@ void main() {
         vec3 lightPos = lights[i].position.xyz;
         vec3 lightColor = lights[i].color.rgb;
         float intensity = lights[i].color.a;
-        vec3 viewPos = vec3(1.0, 2.0, 5.0);
+        vec3 viewPos = u_CameraPosition;
 
         // diffuse
         vec3 norm = normalize(Normal);

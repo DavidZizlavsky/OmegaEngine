@@ -52,7 +52,12 @@ namespace Omega {
 		RenderObjectHandle renderObjectHandle = m_renderer->CreateRenderObject(renderObject);
 
 		CameraData cameraData = {};
-		cameraData.viewMatrix = glm::lookAt(glm::vec3(1, 2, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		cameraData.cameraPosition = glm::vec3(0, 2, 3);
+		cameraData.cameraFront = glm::normalize(glm::vec3(0, -1, -1));
+		cameraData.cameraUp = glm::normalize(glm::vec3(0, 1, -1));
+		cameraData.fov = 60.0f;
+		cameraData.nearPlane = 0.1f;
+		cameraData.farPlane = 100.0f;
 
 		float totalTime = 0.0f;
 
@@ -83,9 +88,9 @@ namespace Omega {
 
 			FramebufferSize framebufferSize = m_window->GetFramebufferSize();
 			if (framebufferSize.height != 0) {
-				cameraData.projectionMatrix = glm::perspective((float)glm::radians(60.0f), (float)framebufferSize.width / framebufferSize.height, 0.1f, 100.0f);
-				m_renderer->UpdateCameraData(cameraData);
+				cameraData.aspectRatio = framebufferSize.width / (float)framebufferSize.height;
 			}
+			m_renderer->UpdateCameraData(cameraData);
 
 			m_renderer->FrameEnd();
 

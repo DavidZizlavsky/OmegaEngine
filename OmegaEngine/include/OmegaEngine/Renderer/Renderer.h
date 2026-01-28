@@ -40,8 +40,13 @@ namespace Omega {
 	};
 
 	struct OMEGA_API CameraData {
-		glm::mat4 viewMatrix = 1;
-		glm::mat4 projectionMatrix = 1;
+		float fov;
+		float aspectRatio;
+		float nearPlane;
+		float farPlane;
+		glm::vec3 cameraPosition;
+		glm::vec3 cameraFront;
+		glm::vec3 cameraUp;
 	};
 
 	struct OMEGA_API PointLight {

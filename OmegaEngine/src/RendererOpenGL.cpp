@@ -331,9 +331,24 @@ namespace Omega {
 	// Update camera data
 	void RendererOpenGL::UpdateCameraData(CameraData cameraData)
 	{
+		glm::mat4 viewMatrix = glm::lookAt(
+			cameraData.cameraPosition,
+			cameraData.cameraPosition + cameraData.cameraFront,
+			cameraData.cameraUp
+		);
+
+		glm::mat4 projectionMatrix = glm::perspective(
+			glm::radians(cameraData.fov),
+			cameraData.aspectRatio,
+			cameraData.nearPlane,
+			cameraData.farPlane
+		);
+
 		FrameData frameData = {};
-		frameData.projectionMatrix = cameraData.projectionMatrix;
-		frameData.viewMatrix = cameraData.viewMatrix;
+		frameData.projectionMatrix = projectionMatrix;
+		frameData.viewMatrix = viewMatrix;
+		frameData.viewProjectionMatrix = projectionMatrix * viewMatrix;
+		frameData.cameraPosition = cameraData.cameraPosition;
 
 		void* mappedPtr = glMapNamedBufferRange(
 			m_frameUBO,

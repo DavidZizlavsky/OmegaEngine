@@ -9,6 +9,8 @@ layout(std140, binding = 0) uniform FrameData
 {
     mat4 u_ViewMatrix;
     mat4 u_ProjectionMatrix;
+    mat4 u_ViewProjectionMatrix;
+    vec3 u_CameraPosition;
 };
 
 out vec3 FragPos;
@@ -18,5 +20,5 @@ void main() {
     FragPos = vec3(u_ModelMatrix * vec4(inPosition, 1.0));
     Normal = mat3(transpose(inverse(u_ModelMatrix))) * inNormal;
 
-    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(inPosition, 1.0);
+    gl_Position = u_ViewProjectionMatrix * u_ModelMatrix * vec4(inPosition, 1.0);
 }

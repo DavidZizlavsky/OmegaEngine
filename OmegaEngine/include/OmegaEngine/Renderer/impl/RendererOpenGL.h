@@ -16,6 +16,8 @@ namespace Omega {
 	struct alignas(16) FrameData {
 		glm::mat4 viewMatrix = 1;
 		glm::mat4 projectionMatrix = 1;
+		glm::mat4 viewProjectionMatrix = 1;
+		glm::vec3 cameraPosition;
 	};
 	
 	struct alignas(16) PointLightData {
