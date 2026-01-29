@@ -19,6 +19,9 @@ namespace Omega {
 		void SwapBuffers() override;
 
 		FramebufferSize GetFramebufferSize() override;
+		MousePosition GetCursorPosition() override;
+		void SetCursorPosition(MousePosition position) override;
+		void SetCursorMode(CursorMode mode) override;
 
 		void SetResizeCallback(ResizeCallback callback) override;
 		void OnCallbackFramebufferResize(int width, int height);

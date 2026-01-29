@@ -8,6 +8,16 @@ namespace Omega {
 		int height = 0;
 	};
 
+	struct OMEGA_API MousePosition {
+		double x = 0.0;
+		double y = 0.0;
+	};
+
+	enum class OMEGA_API CursorMode {
+		Normal,
+		Hidden
+	};
+
 	class OMEGA_API Window {
 	public:
 		using ResizeCallback = std::function<void(int width, int height)>;
@@ -19,6 +29,9 @@ namespace Omega {
 
 		virtual void SetResizeCallback(ResizeCallback callback) = 0;
 		virtual FramebufferSize GetFramebufferSize() = 0;
+		virtual MousePosition GetCursorPosition() = 0;
+		virtual void SetCursorPosition(MousePosition position) = 0;
+		virtual void SetCursorMode(CursorMode mode) = 0;
 	};
 
 	enum class OMEGA_API WindowLib {

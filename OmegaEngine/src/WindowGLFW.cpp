@@ -137,4 +137,37 @@ namespace Omega {
 	{
 		return m_framebufferSize;
 	}
+
+	/*
+	 * Returns mouse position struct
+	 */
+	MousePosition WindowGLFW::GetCursorPosition()
+	{
+		MousePosition mousePosition = {};
+		glfwGetCursorPos(m_window, &mousePosition.x, &mousePosition.y);
+		return mousePosition;
+	}
+
+	/*
+	 * Sets cursor position
+	 */
+	void WindowGLFW::SetCursorPosition(MousePosition position)
+	{
+		glfwSetCursorPos(m_window, position.x, position.y);
+	}
+
+	/*
+	 * Sets cursor mode
+	 */
+	void WindowGLFW::SetCursorMode(CursorMode mode)
+	{
+		switch (mode) {
+			case CursorMode::Normal:
+				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				break;
+			case CursorMode::Hidden:
+				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+				break;
+		}
+	}
 }

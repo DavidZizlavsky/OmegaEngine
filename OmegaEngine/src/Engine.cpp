@@ -53,8 +53,6 @@ namespace Omega {
 
 		CameraData cameraData = {};
 		cameraData.cameraPosition = glm::vec3(0, 2, 3);
-		cameraData.cameraFront = glm::normalize(glm::vec3(0, -1, -1));
-		cameraData.cameraUp = glm::normalize(glm::vec3(0, 1, -1));
 		cameraData.fov = 60.0f;
 		cameraData.nearPlane = 0.1f;
 		cameraData.farPlane = 100.0f;
@@ -72,6 +70,15 @@ namespace Omega {
 
 		m_timeFrameBefore = std::chrono::steady_clock::now();
 
+		FramebufferSize framebufferSize = m_window->GetFramebufferSize();
+		double yaw = -90.0f, pitch = -45.0f;
+
+		MousePosition mousePosition = {};
+		mousePosition.x = framebufferSize.width / 2.0;
+		mousePosition.y = framebufferSize.height / 2.0;
+		m_window->SetCursorPosition(mousePosition);
+
+		m_window->SetCursorMode(CursorMode::Hidden);
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			auto now = std::chrono::steady_clock::now();
@@ -86,11 +93,42 @@ namespace Omega {
 			glm::mat4 model = glm::rotate(glm::mat4(1), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 			m_renderer->UpdateRenderObjectModelMatrix(renderObjectHandle, model);
 
-			FramebufferSize framebufferSize = m_window->GetFramebufferSize();
+			framebufferSize = m_window->GetFramebufferSize();
 			if (framebufferSize.height != 0) {
 				cameraData.aspectRatio = framebufferSize.width / (float)framebufferSize.height;
 			}
+
+			mousePosition = m_window->GetCursorPosition();
+			double xoffset = mousePosition.x - (framebufferSize.width / 2);
+			double yoffset = (framebufferSize.height / 2) - mousePosition.y;
+
+			constexpr float sensitivity = 0.1f;
+			xoffset *= sensitivity;
+			yoffset *= sensitivity;
+
+			yaw += xoffset;
+			pitch += yoffset;
+
+			pitch = glm::clamp(pitch, -89.0, 89.0);
+
+			glm::vec3 front;
+			front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+			front.y = sin(glm::radians(pitch));
+			front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+			front = glm::normalize(front);
+
+			glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+			glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
+			glm::vec3 up = glm::normalize(glm::cross(right, front));
+
+			cameraData.cameraFront = front;
+			cameraData.cameraUp = up;
+
 			m_renderer->UpdateCameraData(cameraData);
+
+			mousePosition.x = framebufferSize.width / 2.0;
+			mousePosition.y = framebufferSize.height / 2.0;
+			m_window->SetCursorPosition(mousePosition);
 
 			m_renderer->FrameEnd();
 
