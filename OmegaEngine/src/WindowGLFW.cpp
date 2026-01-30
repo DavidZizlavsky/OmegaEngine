@@ -162,12 +162,34 @@ namespace Omega {
 	void WindowGLFW::SetCursorMode(CursorMode mode)
 	{
 		switch (mode) {
-			case CursorMode::Normal:
+			case CursorMode::NORMAL:
 				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 				break;
-			case CursorMode::Hidden:
+			case CursorMode::HIDDEN:
 				glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 				break;
+		}
+	}
+
+	bool WindowGLFW::IsKeyPressed(KeyCode key)
+	{
+		int state = glfwGetKey(m_window, (int)key);
+		if (state == GLFW_PRESS) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool WindowGLFW::IsMouseButtonPressed(MouseButtonCode button)
+	{
+		int state = glfwGetMouseButton(m_window, (int)button);
+		if (state == GLFW_PRESS) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }

@@ -22,6 +22,8 @@ namespace Omega {
 		MousePosition GetCursorPosition() override;
 		void SetCursorPosition(MousePosition position) override;
 		void SetCursorMode(CursorMode mode) override;
+		bool IsKeyPressed(KeyCode key) override;
+		bool IsMouseButtonPressed(MouseButtonCode button) override;
 
 		void SetResizeCallback(ResizeCallback callback) override;
 		void OnCallbackFramebufferResize(int width, int height);

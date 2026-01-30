@@ -78,7 +78,25 @@ namespace Omega {
 		mousePosition.y = framebufferSize.height / 2.0;
 		m_window->SetCursorPosition(mousePosition);
 
-		m_window->SetCursorMode(CursorMode::Hidden);
+		bool controlingCamera = false;
+
+		MousePosition lastMousePosition = mousePosition;
+
+		pitch = glm::clamp(pitch, -89.0, 89.0);
+
+		glm::vec3 initialFront;
+		initialFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		initialFront.y = sin(glm::radians(pitch));
+		initialFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		initialFront = glm::normalize(initialFront);
+
+		glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 initialRight = glm::normalize(glm::cross(initialFront, worldUp));
+		glm::vec3 initialUp = glm::normalize(glm::cross(initialRight, initialFront));
+
+		cameraData.cameraFront = initialFront;
+		cameraData.cameraUp = initialUp;
+
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			auto now = std::chrono::steady_clock::now();
@@ -98,37 +116,74 @@ namespace Omega {
 				cameraData.aspectRatio = framebufferSize.width / (float)framebufferSize.height;
 			}
 
-			mousePosition = m_window->GetCursorPosition();
-			double xoffset = mousePosition.x - (framebufferSize.width / 2);
-			double yoffset = (framebufferSize.height / 2) - mousePosition.y;
+			bool cameraButtonPressed = m_window->IsMouseButtonPressed(MouseButtonCode::MOUSE_RIGHT);
+			if (cameraButtonPressed && !controlingCamera) {
+				m_window->SetCursorMode(CursorMode::HIDDEN);
+				controlingCamera = true;
+				mousePosition = m_window->GetCursorPosition();
+				lastMousePosition = mousePosition;
+			}
+			else if (!cameraButtonPressed && controlingCamera) {
+				m_window->SetCursorMode(CursorMode::NORMAL);
+				controlingCamera = false;
+			}
 
-			constexpr float sensitivity = 0.1f;
-			xoffset *= sensitivity;
-			yoffset *= sensitivity;
+			if (controlingCamera) {
+				mousePosition = m_window->GetCursorPosition();
+				double xoffset = mousePosition.x - lastMousePosition.x;
+				double yoffset = lastMousePosition.y - mousePosition.y;
 
-			yaw += xoffset;
-			pitch += yoffset;
+				constexpr float sensitivity = 0.1f;
+				xoffset *= sensitivity;
+				yoffset *= sensitivity;
 
-			pitch = glm::clamp(pitch, -89.0, 89.0);
+				yaw += xoffset;
+				pitch += yoffset;
 
-			glm::vec3 front;
-			front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-			front.y = sin(glm::radians(pitch));
-			front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-			front = glm::normalize(front);
+				pitch = glm::clamp(pitch, -89.0, 89.0);
 
-			glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-			glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
-			glm::vec3 up = glm::normalize(glm::cross(right, front));
+				glm::vec3 front;
+				front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+				front.y = sin(glm::radians(pitch));
+				front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+				front = glm::normalize(front);
 
-			cameraData.cameraFront = front;
-			cameraData.cameraUp = up;
+				glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
+				glm::vec3 up = glm::normalize(glm::cross(right, front));
+
+				cameraData.cameraFront = front;
+				cameraData.cameraUp = up;
+
+				mousePosition.x = framebufferSize.width / 2.0;
+				mousePosition.y = framebufferSize.height / 2.0;
+				m_window->SetCursorPosition(mousePosition);
+				lastMousePosition = mousePosition;
+			}
+
+			bool goForward = m_window->IsKeyPressed(KeyCode::W);
+			bool goBackward = m_window->IsKeyPressed(KeyCode::S);
+			bool goLeft = m_window->IsKeyPressed(KeyCode::A);
+			bool goRight = m_window->IsKeyPressed(KeyCode::D);
+
+			constexpr float movementSpeed = 10.0f;
+
+			glm::vec3 forward = cameraData.cameraFront;
+			glm::vec3 right = glm::normalize(glm::cross(forward, cameraData.cameraUp));
+
+			if (goForward) {
+				cameraData.cameraPosition += forward * movementSpeed * deltaTime;
+			}
+			if (goBackward) {
+				cameraData.cameraPosition -= forward * movementSpeed * deltaTime;
+			}
+			if (goLeft) {
+				cameraData.cameraPosition -= right * movementSpeed * deltaTime;
+			}
+			if (goRight) {
+				cameraData.cameraPosition += right * movementSpeed * deltaTime;
+			}
 
 			m_renderer->UpdateCameraData(cameraData);
-
-			mousePosition.x = framebufferSize.width / 2.0;
-			mousePosition.y = framebufferSize.height / 2.0;
-			m_window->SetCursorPosition(mousePosition);
 
 			m_renderer->FrameEnd();
 
