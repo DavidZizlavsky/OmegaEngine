@@ -4,9 +4,10 @@
 #include "OmegaEngine/File.h"
 #include <iostream>
 #include <string>
-#include <cstdint>
 #include <GLM/glm.hpp>
 #include <GLM/gtc/type_ptr.hpp>
+#include <chrono>
+#include <vector>
 
 namespace Omega {
 	void Engine::Init()
@@ -84,7 +85,7 @@ namespace Omega {
 
 		pitch = glm::clamp(pitch, -89.0, 89.0);
 
-		glm::vec3 initialFront;
+		glm::vec3 initialFront = glm::vec3();
 		initialFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 		initialFront.y = sin(glm::radians(pitch));
 		initialFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -120,6 +121,7 @@ namespace Omega {
 			if (cameraButtonPressed && !controlingCamera) {
 				m_window->SetCursorMode(CursorMode::HIDDEN);
 				controlingCamera = true;
+
 				mousePosition = m_window->GetCursorPosition();
 				lastMousePosition = mousePosition;
 			}
@@ -142,7 +144,7 @@ namespace Omega {
 
 				pitch = glm::clamp(pitch, -89.0, 89.0);
 
-				glm::vec3 front;
+				glm::vec3 front = glm::vec3();
 				front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 				front.y = sin(glm::radians(pitch));
 				front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -157,6 +159,8 @@ namespace Omega {
 				mousePosition.x = framebufferSize.width / 2.0;
 				mousePosition.y = framebufferSize.height / 2.0;
 				m_window->SetCursorPosition(mousePosition);
+
+				mousePosition = m_window->GetCursorPosition();
 				lastMousePosition = mousePosition;
 			}
 
