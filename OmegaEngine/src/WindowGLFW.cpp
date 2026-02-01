@@ -75,6 +75,27 @@ namespace Omega {
 		}
 	}
 
+	void WindowGLFW::CallbackScroll(GLFWwindow* window, double xOffset, double yOffset)
+	{
+		WindowGLFW* self = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window));
+
+		if (!self) {
+			return;
+		}
+
+		self->OnCallbackScroll(xOffset, yOffset);
+	}
+
+	void WindowGLFW::OnCallbackScroll(double xOffset, double yOffset)
+	{
+		m_scrollOffset.x = xOffset;
+		m_scrollOffset.y = yOffset;
+
+		if (m_scrollCallback) {
+			m_scrollCallback(xOffset, yOffset);
+		}
+	}
+
 	/*
 	 * Creates and opens a new GLFW window
 	 */
@@ -88,6 +109,7 @@ namespace Omega {
 		glfwSetWindowUserPointer(m_window, this);
 		glfwSetFramebufferSizeCallback(m_window, CallbackFramebufferResize);
 		glfwGetFramebufferSize(m_window, &m_framebufferSize.width, &m_framebufferSize.height);
+		glfwSetScrollCallback(m_window, CallbackScroll);
 	}
 
 	/*
@@ -111,6 +133,8 @@ namespace Omega {
 	 */
 	void WindowGLFW::PollEvents()
 	{
+		m_scrollOffset.x = 0.0;
+		m_scrollOffset.y = 0.0;
 		glfwPollEvents();
 	}
 
@@ -191,5 +215,15 @@ namespace Omega {
 		else {
 			return false;
 		}
+	}
+
+	void WindowGLFW::SetScrollCallback(ScrollCallback callback)
+	{
+		m_scrollCallback = callback;
+	}
+
+	ScrollOffset WindowGLFW::GetScrollOffset()
+	{
+		return m_scrollOffset;
 	}
 }

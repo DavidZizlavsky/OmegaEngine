@@ -13,6 +13,11 @@ namespace Omega {
 		double y = 0.0;
 	};
 
+	struct OMEGA_API ScrollOffset {
+		double x = 0.0;
+		double y = 0.0;
+	};
+
 	enum class OMEGA_API CursorMode {
 		NORMAL,
 		HIDDEN
@@ -158,6 +163,7 @@ namespace Omega {
 	class OMEGA_API Window {
 	public:
 		using ResizeCallback = std::function<void(int width, int height)>;
+		using ScrollCallback = std::function<void(double xOffset, double yOffset)>;
 		virtual ~Window() = default;
 
 		virtual int WindowShouldClose() = 0;
@@ -165,8 +171,12 @@ namespace Omega {
 		virtual void SwapBuffers() = 0;
 
 		virtual void SetResizeCallback(ResizeCallback callback) = 0;
+		virtual void SetScrollCallback(ScrollCallback callback) = 0;
+
 		virtual FramebufferSize GetFramebufferSize() = 0;
+		virtual ScrollOffset GetScrollOffset() = 0;
 		virtual MousePosition GetCursorPosition() = 0;
+
 		virtual void SetCursorPosition(MousePosition position) = 0;
 		virtual void SetCursorMode(CursorMode mode) = 0;
 		virtual bool IsKeyPressed(KeyCode key) = 0;

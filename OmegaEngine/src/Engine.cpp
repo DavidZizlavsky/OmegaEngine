@@ -98,6 +98,10 @@ namespace Omega {
 		cameraData.cameraFront = initialFront;
 		cameraData.cameraUp = initialUp;
 
+		float fov = cameraData.fov;
+		constexpr float fovMax = 60.0f;
+		constexpr float fovMin = 10.0f;
+
 		// TODO: move loop to App code
 		while (!m_window->WindowShouldClose()) {
 			auto now = std::chrono::steady_clock::now();
@@ -186,6 +190,11 @@ namespace Omega {
 			if (goRight) {
 				cameraData.cameraPosition += right * movementSpeed * deltaTime;
 			}
+
+			ScrollOffset scrollOffset = m_window->GetScrollOffset();
+			fov += (-scrollOffset.y) * deltaTime * 250;
+			fov = glm::clamp(fov, fovMin, fovMax);
+			cameraData.fov = fov;
 
 			m_renderer->UpdateCameraData(cameraData);
 
