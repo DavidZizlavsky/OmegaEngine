@@ -2,6 +2,7 @@
 #include "OmegaEngine/Macros.h"
 #include <cstdint>
 #include <GLM/glm.hpp>
+#include <vector>
 
 namespace Omega {
 	using MeshHandle = uint32_t;
